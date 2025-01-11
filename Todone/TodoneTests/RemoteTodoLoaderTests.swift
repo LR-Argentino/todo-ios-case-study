@@ -15,12 +15,12 @@ class RemoteTodoLoader {
     }
     
     func load(from url: URL) {
-        self.client.load(from: url)
+        self.client.get(from: url)
     }
 }
 
 protocol HTTPClient {
-    func load(from url: URL)
+    func get(from url: URL)
 }
 
 final class RemoteTodoLoaderTests: XCTestCase {
@@ -47,9 +47,17 @@ final class RemoteTodoLoaderTests: XCTestCase {
         sut.load(from: url)
         sut.load(from: url)
         
-        XCTAssertEqual(client.requestedURL.count, 2)
+        XCTAssertEqual(client.requestedURL, [url, url])
     }
 
+    func test_load_requestsDataFromURLWithCorrectURL() {
+        let (sut, client) = makeSUT()
+        let url = URL(string: "https://example.com")!
+        
+        sut.load(from: url)
+        
+        XCTAssertEqual(client.requestedURL.first, url)
+    }
     
     // MARK: Helpers
     
@@ -62,7 +70,7 @@ final class RemoteTodoLoaderTests: XCTestCase {
     private class HTTPClientSpy: HTTPClient {
         var requestedURL = [URL]()
         
-        func load(from url: URL) {
+        func get(from url: URL) {
             requestedURL.append(url)
         }
     }
