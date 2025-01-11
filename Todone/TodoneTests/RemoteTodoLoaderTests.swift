@@ -13,6 +13,7 @@ class RemoteTodoLoader {
     
     public enum Error: Swift.Error {
         case connectivity
+        case invalidData
     }
     
     init(client: HTTPClient, url: URL) {
@@ -28,7 +29,8 @@ class RemoteTodoLoader {
 }
 
 protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (Error) -> Void)
+    typealias Result = Swift.Result<Data, Error>
+    func get(from url: URL, completion: @escaping (Result) -> Void)
 }
 
 final class RemoteTodoLoaderTests: XCTestCase {
@@ -69,13 +71,16 @@ final class RemoteTodoLoaderTests: XCTestCase {
     
     func test_load_delieversErrorOnClientError() {
         let (sut, client) = makeSUT()
-        client.error = NSError(domain: "Test", code: 0)
+        let anyError = NSError(domain: "Test", code: 0)
      
-        var capturedError: RemoteTodoLoader.Error?
-        sut.load { error in capturedError = error}
+        var capturedError = [RemoteTodoLoader.Error]()
+        sut.load {  capturedError.append($0)}
         
-        XCTAssertEqual(capturedError, .connectivity)
+        client.completions[0](.failure(anyError))
+        XCTAssertEqual(capturedError, [.connectivity])
     }
+    
+    
     
     // MARK: Helpers
     
@@ -87,12 +92,10 @@ final class RemoteTodoLoaderTests: XCTestCase {
     
     private class HTTPClientSpy: HTTPClient {
         var requestedURL = [URL]()
-        var error: Error?
+        var completions = [(HTTPClient.Result) -> Void]()
         
-        func get(from url: URL, completion: @escaping (Error) -> Void) {
-            if let error = error {
-                completion(error)
-            }
+        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
+            completions.append(completion)
             requestedURL.append(url)
         }
     }
