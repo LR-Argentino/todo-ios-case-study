@@ -8,5 +8,7 @@
 import Foundation
 
 protocol TodoLoader {
-    func loadTodos(completion: @escaping (Result<[TodoItem], Error>) -> Void)
+    typealias Result = Swift.Result<[TodoItem], Error>
+    
+    func load(completion: @escaping (Result) -> Void)
 }
