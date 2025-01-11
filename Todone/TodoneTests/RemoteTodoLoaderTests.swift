@@ -106,9 +106,11 @@ final class RemoteTodoLoaderTests: XCTestCase {
     
     // MARK: Helpers
     
-    private func makeSUT(url: URL = URL(string: "https://example.com")!) -> (RemoteTodoLoader, HTTPClientSpy) {
+    private func makeSUT(url: URL = URL(string: "https://example.com")!, file: StaticString = #file, line: UInt = #line) -> (RemoteTodoLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteTodoLoader(client: client, url: url)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(client, file: file, line: line)
         return (sut, client)
     }
     
