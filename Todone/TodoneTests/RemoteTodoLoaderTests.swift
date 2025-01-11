@@ -22,14 +22,20 @@ class RemoteTodoLoader {
     }
     
     func load(completion: @escaping (RemoteTodoLoader.Error) -> Void = { _ in }) {
-        self.client.get(from: url) { error in
-            completion(.connectivity)
+        self.client.get(from: url) { result in
+            switch result {
+            case .success((_, _)):
+                completion(.invalidData)
+            case .failure:
+                completion(.connectivity)
+            }
         }
     }
 }
 
 protocol HTTPClient {
-    typealias Result = Swift.Result<Data, Error>
+    typealias Result = Swift.Result<(Data, HTTPURLResponse), Error>
+    
     func get(from url: URL, completion: @escaping (Result) -> Void)
 }
 
@@ -76,10 +82,26 @@ final class RemoteTodoLoaderTests: XCTestCase {
         var capturedError = [RemoteTodoLoader.Error]()
         sut.load {  capturedError.append($0)}
         
-        client.completions[0](.failure(anyError))
+        client.complete(with: anyError)
         XCTAssertEqual(capturedError, [.connectivity])
     }
     
+    func test_load_delieversErrorOnNon200HTTPStatus() {
+        let (sut, client) = makeSUT()
+        let url = URL(string: "https://example.com")!
+        let statusCodes = [199, 300, 400, 500]
+        
+        var capturedError = [RemoteTodoLoader.Error]()
+        
+        
+        statusCodes.enumerated().forEach { index, statusCode in
+            sut.load() { capturedError.append($0)}
+            client.complete(from: url, withStatusCode: statusCode, at: index)
+            XCTAssertEqual(capturedError, [.invalidData])
+            capturedError.removeLast()
+        }
+        
+    }
     
     
     // MARK: Helpers
@@ -97,6 +119,17 @@ final class RemoteTodoLoaderTests: XCTestCase {
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
             completions.append(completion)
             requestedURL.append(url)
+        }
+        
+        func complete(with error: Error, at index: Int = 0) {
+            completions[index](.failure(error))
+        }
+        
+        func complete(from url: URL, withStatusCode code: Int, at index: Int = 0) {
+            let response = HTTPURLResponse(url: url, statusCode:  code, httpVersion: nil, headerFields: nil)!
+            let data = Data()
+            requestedURL.append(url)
+            completions[index](.success((data, response)))
         }
     }
 }
