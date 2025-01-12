@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol TodoLoader {
+public protocol TodoLoader {
     typealias Result = Swift.Result<[TodoItem], Error>
     
     func load(completion: @escaping (Result) -> Void)

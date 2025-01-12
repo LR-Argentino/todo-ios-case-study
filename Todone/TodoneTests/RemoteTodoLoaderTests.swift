@@ -6,38 +6,7 @@
 //
 
 import XCTest
-
-class RemoteTodoLoader {
-    private let client: HTTPClient
-    private let url: URL
-    
-    public enum Error: Swift.Error {
-        case connectivity
-        case invalidData
-    }
-    
-    init(client: HTTPClient, url: URL) {
-        self.client = client
-        self.url = url
-    }
-    
-    func load(completion: @escaping (RemoteTodoLoader.Error) -> Void = { _ in }) {
-        self.client.get(from: url) { result in
-            switch result {
-            case .success((_, _)):
-                completion(.invalidData)
-            case .failure:
-                completion(.connectivity)
-            }
-        }
-    }
-}
-
-protocol HTTPClient {
-    typealias Result = Swift.Result<(Data, HTTPURLResponse), Error>
-    
-    func get(from url: URL, completion: @escaping (Result) -> Void)
-}
+import Todone
 
 final class RemoteTodoLoaderTests: XCTestCase {
     
@@ -51,7 +20,7 @@ final class RemoteTodoLoaderTests: XCTestCase {
         let url = URL(string: "https://example.com")!
         let (sut, client) = makeSUT(url: url)
         
-        sut.load()
+        sut.load() { _ in }
         
         XCTAssertNotNil(client.requestedURL)
     }
@@ -60,8 +29,8 @@ final class RemoteTodoLoaderTests: XCTestCase {
         let url = URL(string: "https://example.com")!
         let (sut, client) = makeSUT(url: url)
         
-        sut.load()
-        sut.load()
+        sut.load() { _ in }
+        sut.load() { _ in }
         
         XCTAssertEqual(client.requestedURL, [url, url])
     }
@@ -70,7 +39,7 @@ final class RemoteTodoLoaderTests: XCTestCase {
         let (sut, client) = makeSUT()
         let url = URL(string: "https://example.com")!
         
-        sut.load()
+        sut.load() { _ in }
         
         XCTAssertEqual(client.requestedURL.first, url)
     }
@@ -80,10 +49,17 @@ final class RemoteTodoLoaderTests: XCTestCase {
         let anyError = NSError(domain: "Test", code: 0)
      
         var capturedError = [RemoteTodoLoader.Error]()
-        sut.load {  capturedError.append($0)}
+        sut.load { result in
+            switch result {
+            case .failure(let error):
+                capturedError.append(error as! RemoteTodoLoader.Error)
+            default:
+                XCTFail()
+            }
+        }
         
         client.complete(with: anyError)
-        XCTAssertEqual(capturedError, [.connectivity])
+        XCTAssertEqual(capturedError , [.connectivity])
     }
     
     func test_load_delieversErrorOnNon200HTTPStatus() {
@@ -95,12 +71,29 @@ final class RemoteTodoLoaderTests: XCTestCase {
         
         
         statusCodes.enumerated().forEach { index, statusCode in
-            sut.load() { capturedError.append($0)}
+            sut.load() { result in
+                switch result {
+                case .failure(let error):
+                    capturedError.append(error as! RemoteTodoLoader.Error)
+                default:
+                    XCTFail()
+                }
+            }
             client.complete(from: url, withStatusCode: statusCode, at: index)
             XCTAssertEqual(capturedError, [.invalidData])
             capturedError.removeLast()
         }
         
+    }
+    
+    
+    func test_load_delieversCorrectDataOn200HTTPStatus() {
+        let (sut, client) = makeSUT()
+        let item1 = makeItem(title: "Case stud", comment: "test")
+        
+        expect(sut, toCompleteWith: .success([item1.model])) {
+            client.complete(from: URL(string: "https://example.com")!, withStatusCode: 200, with: item1.json)
+        }
     }
     
     
@@ -113,7 +106,65 @@ final class RemoteTodoLoaderTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         return (sut, client)
     }
+                        
+    private func expect(_ sut: RemoteTodoLoader, toCompleteWith expectedResult: RemoteTodoLoader.Result, whem action: () -> Void, file: StaticString = #file, line: UInt = #line) {
+        let exp = expectation(description: "Wait for load completion")
+        
+        sut.load { recievedResult in
+            switch (recievedResult, expectedResult) {
+                case let (.success(recievedItems), .success(expectedItems)):
+                for (index, (received, expected)) in zip(recievedItems, expectedItems).enumerated() {
+                    // Überprüfung der genauen Übereinstimmung der Date-Objekte
+                    XCTAssertEqual(received.id, expected.id, "ID mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.title, expected.title, "Title mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.comment, expected.comment, "Comment mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.priority, expected.priority, "Priority mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.users, expected.users, "Users mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.dueDate.formatted(date: .numeric, time: .omitted), expected.dueDate.formatted(date: .numeric, time: .omitted), "DueDate mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.createdAt.formatted(date: .numeric, time: .omitted), expected.createdAt.formatted(date: .numeric, time: .omitted), "CreatedAt mismatch for item \(index + 1)")
+                }
+            case let (.failure(recievedError as RemoteTodoLoader.Error), .failure(expectedError as RemoteTodoLoader.Error)):
+                XCTAssertEqual(recievedError , expectedError, file: file, line: line)
+            default:
+                XCTFail("Expected result \(expectedResult) but got \(recievedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        
+        action()
+        
+        wait(for: [exp], timeout: 1.0)
+    }
     
+    private func makeItem(title: String, comment: String?) -> (model: TodoItem, json: Data) {
+        let item = TodoItem(
+            id: UUID(),
+            title: title,
+            comment: comment,
+            priority: "low",
+            dueDate: Date(),
+            createdAt: Date(),
+            users: [UUID(), UUID()]
+        )
+
+        let formatter = ISO8601DateFormatter()
+        let jsonArray: [[String: Any]] = [
+            [
+                "id": item.id.uuidString,
+                "title": item.title,
+                "comment": item.comment as Any,
+                "priority": item.priority,
+                "dueDate": formatter.string(from: item.dueDate),
+                "createdAt": formatter.string(from: item.createdAt),
+                "users": item.users.map { $0.uuidString }
+            ]
+        ]
+        let jsonItem = try! JSONSerialization.data(withJSONObject: jsonArray)
+        
+        return (item, jsonItem)
+    }
+    
+        
     private class HTTPClientSpy: HTTPClient {
         var requestedURL = [URL]()
         var completions = [(HTTPClient.Result) -> Void]()
@@ -127,9 +178,8 @@ final class RemoteTodoLoaderTests: XCTestCase {
             completions[index](.failure(error))
         }
         
-        func complete(from url: URL, withStatusCode code: Int, at index: Int = 0) {
+        func complete(from url: URL, withStatusCode code: Int, at index: Int = 0, with data: Data = Data()) {
             let response = HTTPURLResponse(url: url, statusCode:  code, httpVersion: nil, headerFields: nil)!
-            let data = Data()
             requestedURL.append(url)
             completions[index](.success((data, response)))
         }
