@@ -92,7 +92,35 @@ final class RemoteTodoLoaderTests: XCTestCase {
         let item1 = makeItem(title: "Case stud", comment: "test")
         
         expect(sut, toCompleteWith: .success([item1.model])) {
-            client.complete(from: URL(string: "https://example.com")!, withStatusCode: 200, with: item1.json)
+            client.complete(withStatusCode: 200, with: makeItemsJSON([item1.json]))
+        }
+    }
+    
+    func test_load_devlieversInvalidDataOnInvalidJSON() {
+        let (sut, client) = makeSUT()
+        let invalidData = Data("invalid".utf8)
+        
+        expect(sut, toCompleteWith: .failure(RemoteTodoLoader.Error.invalidData)) {
+            client.complete(withStatusCode: 200, with: invalidData)
+        }
+    }
+    
+    func test_load_delieversTodoItemsOn200HTTPStatus() {
+        let (sut, client) = makeSUT()
+        let item1 = makeItem(title: "Case stud", comment: "test")
+        let item2 = makeItem(title: "Another case", comment: "test")
+        
+        expect(sut, toCompleteWith: .success([item1.model, item2.model])) {
+            client.complete(withStatusCode: 200, with: makeItemsJSON([item1.json, item2.json]))
+        }
+    }
+    
+    func test_load_delieversSuccessOnEmptyJSON() {
+        let (sut, client) = makeSUT()
+        let item = makeItemsJSON([])
+        
+        expect(sut, toCompleteWith: .success([])) {
+            client.complete(withStatusCode: 200, with: item)
         }
     }
     
@@ -136,7 +164,7 @@ final class RemoteTodoLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func makeItem(title: String, comment: String?) -> (model: TodoItem, json: Data) {
+    private func makeItem(title: String, comment: String?) -> (model: TodoItem, json: [String: Any]) {
         let item = TodoItem(
             id: UUID(),
             title: title,
@@ -148,8 +176,7 @@ final class RemoteTodoLoaderTests: XCTestCase {
         )
 
         let formatter = ISO8601DateFormatter()
-        let jsonArray: [[String: Any]] = [
-            [
+        let jsonItem = [
                 "id": item.id.uuidString,
                 "title": item.title,
                 "comment": item.comment as Any,
@@ -157,11 +184,15 @@ final class RemoteTodoLoaderTests: XCTestCase {
                 "dueDate": formatter.string(from: item.dueDate),
                 "createdAt": formatter.string(from: item.createdAt),
                 "users": item.users.map { $0.uuidString }
-            ]
         ]
-        let jsonItem = try! JSONSerialization.data(withJSONObject: jsonArray)
+      
         
         return (item, jsonItem)
+    }
+    
+    private func makeItemsJSON(_ items: [[String: Any]]) -> Data {
+        let json = ["items": items]
+        return try! JSONSerialization.data(withJSONObject: json)
     }
     
         
@@ -178,7 +209,7 @@ final class RemoteTodoLoaderTests: XCTestCase {
             completions[index](.failure(error))
         }
         
-        func complete(from url: URL, withStatusCode code: Int, at index: Int = 0, with data: Data = Data()) {
+        func complete(from url: URL = URL(string: "www.example.com")!, withStatusCode code: Int, at index: Int = 0, with data: Data = Data()) {
             let response = HTTPURLResponse(url: url, statusCode:  code, httpVersion: nil, headerFields: nil)!
             requestedURL.append(url)
             completions[index](.success((data, response)))
