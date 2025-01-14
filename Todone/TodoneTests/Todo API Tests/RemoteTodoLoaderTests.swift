@@ -142,14 +142,13 @@ final class RemoteTodoLoaderTests: XCTestCase {
             switch (recievedResult, expectedResult) {
                 case let (.success(recievedItems), .success(expectedItems)):
                 for (index, (received, expected)) in zip(recievedItems, expectedItems).enumerated() {
-                    // Überprüfung der genauen Übereinstimmung der Date-Objekte
-                    XCTAssertEqual(received.id, expected.id, "ID mismatch for item \(index + 1)")
-                    XCTAssertEqual(received.title, expected.title, "Title mismatch for item \(index + 1)")
-                    XCTAssertEqual(received.comment, expected.comment, "Comment mismatch for item \(index + 1)")
-                    XCTAssertEqual(received.priority, expected.priority, "Priority mismatch for item \(index + 1)")
-                    XCTAssertEqual(received.users, expected.users, "Users mismatch for item \(index + 1)")
-                    XCTAssertEqual(received.dueDate.formatted(date: .numeric, time: .omitted), expected.dueDate.formatted(date: .numeric, time: .omitted), "DueDate mismatch for item \(index + 1)")
-                    XCTAssertEqual(received.createdAt.formatted(date: .numeric, time: .omitted), expected.createdAt.formatted(date: .numeric, time: .omitted), "CreatedAt mismatch for item \(index + 1)")
+                    XCTAssertEqual(received.id, expected.id, "ID mismatch for item \(index + 1)", file: file, line: line)
+                    XCTAssertEqual(received.title, expected.title, "Title mismatch for item \(index + 1)", file: file, line: line)
+                    XCTAssertEqual(received.comment, expected.comment, "Comment mismatch for item \(index + 1)", file: file, line: line)
+                    XCTAssertEqual(received.priority, expected.priority, "Priority mismatch for item \(index + 1)", file: file, line: line)
+                    XCTAssertEqual(received.users, expected.users, "Users mismatch for item \(index + 1)", file: file, line: line)
+                    XCTAssertEqual(received.dueDate.formatted(date: .numeric, time: .omitted), expected.dueDate.formatted(date: .numeric, time: .omitted), "DueDate mismatch for item \(index + 1)", file: file, line: line)
+                    XCTAssertEqual(received.createdAt.formatted(date: .numeric, time: .omitted), expected.createdAt.formatted(date: .numeric, time: .omitted), "CreatedAt mismatch for item \(index + 1)", file: file, line: line)
                 }
             case let (.failure(recievedError as RemoteTodoLoader.Error), .failure(expectedError as RemoteTodoLoader.Error)):
                 XCTAssertEqual(recievedError , expectedError, file: file, line: line)
