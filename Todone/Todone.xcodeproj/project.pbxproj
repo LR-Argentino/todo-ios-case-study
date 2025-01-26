@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2B7FD75D2D32A143009F7B10 /* Todone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B7FD7522D32A143009F7B10 /* Todone.framework */; };
-		2B7FD8332D341F3A009F7B10 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2B7FD8322D341F3A009F7B10 /* FirebaseCore */; };
-		2B7FD8352D3420AF009F7B10 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2B7FD8342D3420AF009F7B10 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,8 +56,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B7FD8332D341F3A009F7B10 /* FirebaseCore in Frameworks */,
-				2B7FD8352D3420AF009F7B10 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,8 +127,6 @@
 			);
 			name = Todone;
 			packageProductDependencies = (
-				2B7FD8322D341F3A009F7B10 /* FirebaseCore */,
-				2B7FD8342D3420AF009F7B10 /* FirebaseFirestore */,
 			);
 			productName = Todone;
 			productReference = 2B7FD7522D32A143009F7B10 /* Todone.framework */;
@@ -189,7 +183,6 @@
 			mainGroup = 2B7FD7482D32A143009F7B10;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2B7FD82B2D341772009F7B10 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2B7FD7532D32A143009F7B10 /* Products */;
@@ -500,30 +493,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		2B7FD82B2D341772009F7B10 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.6.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		2B7FD8322D341F3A009F7B10 /* FirebaseCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2B7FD82B2D341772009F7B10 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
-		};
-		2B7FD8342D3420AF009F7B10 /* FirebaseFirestore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2B7FD82B2D341772009F7B10 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2B7FD7492D32A143009F7B10 /* Project object */;
 }
