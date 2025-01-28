@@ -47,7 +47,7 @@ public final class RemoteTodoLoader: TodoLoader {
 extension Array where Element == RemoteTodoItem {
     func toModels() -> [TodoItem] {
         return map {
-            TodoItem(id: $0.id, title: $0.title, comment: $0.comment, priority: $0.priority, users: $0.users)
+            TodoItem(id: $0.id, title: $0.title, comment: $0.comment, priority: $0.priority, dueDate: $0.dueDate, users: $0.users)
         }
     }
 }

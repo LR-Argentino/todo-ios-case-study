@@ -19,11 +19,8 @@ public final class RemoteTodoItemMapper {
     }
     
     static func map(from: Data, response: HTTPURLResponse) throws -> [RemoteTodoItem] {
-        let decoder = JSONDecoder()
-        // TODO: Change the strategy based on Current location
-        decoder.dateDecodingStrategy = .iso8601
         guard response.statusCode == OK_200,
-              let root = try? decoder.decode(Root.self, from: from) else {
+              let root = try? JSONDecoder().decode(Root.self, from: from) else {
             throw RemoteTodoLoader.Error.invalidData
         }
         return root.items
