@@ -8,12 +8,6 @@
 import Foundation
 
 
-public enum PriorityStatus: String, Codable {
-    case low
-    case medium
-    case high
-}
-
 public struct TodoItem: Equatable {
     public let id: UUID
     public var title: String
