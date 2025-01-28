@@ -26,7 +26,7 @@ class TodoCreater {
     func create(title: String, comment: String? = nil, priority: String, dueDate: Date, users: [UUID] = []) throws {
         let isTitleEmpty = title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         
-        guard isTitleEmpty == false else {
+        guard !isTitleEmpty else {
             throw TodoCreaterError.emptyTitle
         }
         
@@ -59,7 +59,6 @@ final class TodoCreaterTests: XCTestCase {
     }
     
     // MARK: Helper
-    
     private class MockTodoRepository: TodoRepositoryProtocol {
         var todos: [TodoItem] = []
         
