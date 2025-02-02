@@ -15,5 +15,5 @@ public enum PriorityLevel: String {
 
 // TODO: add concurrency
 protocol TodoCreator {
-    func create(title: String, comment: String?, priority: PriorityLevel, dueDate: Date, users: [UUID]) throws
+    func create(title: String, comment: String?, priority: PriorityLevel, dueDate: Date, users: [UUID]) async throws
 }

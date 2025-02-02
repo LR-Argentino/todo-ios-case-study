@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol TodoCreatorRepository {
-    func save(todo: TodoItem)
+    func save(todo: TodoItem) async throws
 }

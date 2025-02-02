@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: Create Protocol for create
 public class CreateTodoUseCase: TodoCreator {
     let todoRepository: TodoCreatorRepository
     
@@ -20,7 +19,7 @@ public class CreateTodoUseCase: TodoCreator {
         self.todoRepository = todoRepository
     }
     
-    public func create(title: String, comment: String? = nil, priority: PriorityLevel, dueDate: Date, users: [UUID] = []) throws {
+    public func create(title: String, comment: String? = nil, priority: PriorityLevel, dueDate: Date, users: [UUID] = []) async throws {
         let isTitleEmpty = title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let isDateInPast = dueDate < Date.now
         
@@ -34,6 +33,6 @@ public class CreateTodoUseCase: TodoCreator {
         
         let todo = TodoItem(title: title, comment: comment, priority: priority.rawValue, dueDate: dueDate, users: users)
         
-        todoRepository.save(todo: todo)
+        try await todoRepository.save(todo: todo)
     }
 }
