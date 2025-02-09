@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class CreateTodoUseCase: TodoCreator {
+public class TodoCreator: CreateTodoProtocol {
     let todoRepository: TodoCreatorRepository
     
     public enum TodoCreatorError: Error {
@@ -33,6 +33,10 @@ public class CreateTodoUseCase: TodoCreator {
         
         let todo = TodoItem(title: title, comment: comment, priority: priority.rawValue, dueDate: dueDate, users: users)
         
-        try await todoRepository.save(todo: todo)
+        do {
+            try await todoRepository.save(todo: todo)
+        } catch {
+            throw error
+        }
     }
 }

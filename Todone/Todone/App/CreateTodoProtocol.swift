@@ -7,13 +7,6 @@
 
 import Foundation
 
-public enum PriorityLevel: String {
-    case low = "Low"
-    case medium = "Medium"
-    case high = "High"
-}
-
-// TODO: add concurrency
-protocol TodoCreator {
+protocol CreateTodoProtocol {
     func create(title: String, comment: String?, priority: PriorityLevel, dueDate: Date, users: [UUID]) async throws
 }

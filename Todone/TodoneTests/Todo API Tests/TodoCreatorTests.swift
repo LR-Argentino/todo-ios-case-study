@@ -23,7 +23,7 @@ final class TodoCreatorTests: XCTestCase {
         do {
             _ = try await sut.create(title: "  ", comment: "some comments", priority: .high, dueDate: Date().addingTimeInterval(10000), users: [])
             XCTFail("Die Funktion hätte einen Fehler werfen sollen, hat es aber nicht.")
-        } catch let error as CreateTodoUseCase.TodoCreatorError {
+        } catch let error as TodoCreator.TodoCreatorError {
             XCTAssertEqual(error, .emptyTitle)
             XCTAssertEqual(repository.todos.count, 0)
         } catch {
@@ -60,9 +60,9 @@ final class TodoCreatorTests: XCTestCase {
         }
     }
 
-    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: CreateTodoUseCase, repository: TodoRepositorySpy) {
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: TodoCreator, repository: TodoRepositorySpy) {
         let mockRepository = TodoRepositorySpy()
-        let sut = CreateTodoUseCase(todoRepository: mockRepository)
+        let sut = TodoCreator(todoRepository: mockRepository)
         trackForMemoryLeaks(mockRepository, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, mockRepository)
@@ -73,7 +73,7 @@ final class TodoCreatorTests: XCTestCase {
         do {
             _ = try await sut.create(title: "Some Title", comment: "some comments", priority: .high, dueDate: Date().addingTimeInterval(deltaTime), users: [])
             XCTFail("Die Funktion hätte einen Fehler werfen sollen, hat es aber nicht.")
-        } catch let error as CreateTodoUseCase.TodoCreatorError {
+        } catch let error as TodoCreator.TodoCreatorError {
             XCTAssertEqual(error, .invalidDate)
             XCTAssertEqual(repository.todos.count, 0)
         } catch {

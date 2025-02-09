@@ -8,69 +8,60 @@
 import Todone
 import XCTest
 
-protocol TodoLoaderRepository {
-    func fetchTodos() async throws -> [TodoItem]
-}
-
-class LoadTodosUseCase {
-    let loaderRepository: TodoLoaderRepository
-
-    init(loaderRepository: TodoLoaderRepository) {
-        self.loaderRepository = loaderRepository
-    }
-
-    func load() async throws -> [TodoItem] {
-        return try await loaderRepository.fetchTodos()
-    }
-}
-
 final class TodoLoaderTests: XCTestCase {
-    func test_load_shouldReturnNothingOnEmptyTodos() async throws {
-        let (sut, _) = makeSUT()
-
-        let loadedTodos = try await sut.load()
-
-        XCTAssertEqual(loadedTodos, [])
-    }
-
-    func test_load_shouldReturnTodosOnCorrectOrder() async throws {
-        let (sut, loader) = makeSUT()
-
-        loader.loadTodos()
+   
+    func test_load_shouldCallLoadMethodOnce() async throws{
+        let repository = TodoRepositoryMock()
+        let sut = TodoLoader(repository: repository)
         
-        let loadedTodos = try await sut.load()
+        _ = try await sut.load()
         
-        XCTAssertNotNil(loadedTodos)
-        XCTAssertEqual(loadedTodos.count, 3)
+        XCTAssertEqual(repository.callCount, 1)
     }
-
-    // MARK: - Helpers
-
-    private func makeSUT() -> (sut: LoadTodosUseCase, loader: MockTodoLoaderRepository) {
-        let repository = MockTodoLoaderRepository()
-        let sut = LoadTodosUseCase(loaderRepository: repository)
-
-        return (sut, repository)
+    
+    func test_load_shouldReturnTodosOnSuccess() async throws {
+        let repository = TodoRepositoryMock()
+        let sut = TodoLoader(repository: repository)
+        let items = [TodoItem(title: "Title", priority: "low", dueDate: Date().addingTimeInterval(3600), users: [])]
+        
+        repository.fillTodos(items)
+        
+        _ = try await sut.load()
+        
+        XCTAssertEqual(repository.todos, items)
     }
-
-    private class MockTodoLoaderRepository: TodoLoaderRepository {
-        private var todos: [TodoItem] = []
-        func fetchTodos() -> [TodoItem] {
+    
+    func test_load_shouldThrowErrorOnFailure() async throws {
+        let repository = TodoRepositoryMock()
+        let sut = TodoLoader(repository: repository)
+        
+        do {
+            repository.loadTodosFailWithError(NSError(domain: "", code: 0, userInfo: nil))
+            _ = try await sut.load()
+        } catch {
+            XCTAssertNotNil(error)
+        }
+    }
+    
+    private class TodoRepositoryMock: TodoLoaderRepository {
+        var callCount = 0
+        var error: Error?
+        var todos: [TodoItem] = []
+        
+        func fetch() async throws -> [Todone.TodoItem] {
+            callCount += 1
+            if error != nil {
+                throw error!
+            }
             return todos
         }
         
-        func loadTodos() {
-            todos = createTodos()
+        func fillTodos(_ todos: [TodoItem]) {
+            self.todos = todos
         }
         
-        private func createTodos() -> [TodoItem] {
-            return [
-                TodoItem(id: UUID(), title: "Some Todo", priority: "low", dueDate: Date().addingTimeInterval(3600), users: []),
-                TodoItem(id: UUID(), title: "Another Todo", priority: "high", dueDate: Date().addingTimeInterval(7200), users: []),
-                TodoItem(id: UUID(), title: "Yet Another Todo", priority: "medium", dueDate: Date().addingTimeInterval(10800), users: [UUID(), UUID()]),
-            ]
+        func loadTodosFailWithError(_ error: Error) {
+            self.error = error
         }
     }
-
-   
 }
