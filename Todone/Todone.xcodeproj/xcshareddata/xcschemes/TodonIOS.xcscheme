@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2B7E11532D46AEE2008F0642"
-               BuildableName = "Authentication.framework"
-               BlueprintName = "Authentication"
+               BlueprintIdentifier = "2BB0D4912D580DF700FE4956"
+               BuildableName = "TodonIOS.app"
+               BlueprintName = "TodonIOS"
                ReferencedContainer = "container:Todone.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -35,9 +35,20 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2B7E115C2D46AEE2008F0642"
-               BuildableName = "AuthenticationTests.xctest"
-               BlueprintName = "AuthenticationTests"
+               BlueprintIdentifier = "2BB0D4B02D580DF900FE4956"
+               BuildableName = "TodonIOSUITests.xctest"
+               BlueprintName = "TodonIOSUITests"
+               ReferencedContainer = "container:Todone.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2BB0D4A62D580DF800FE4956"
+               BuildableName = "TodonIOSTests.xctest"
+               BlueprintName = "TodonIOSTests"
                ReferencedContainer = "container:Todone.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -53,6 +64,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "2BB0D4912D580DF700FE4956"
+            BuildableName = "TodonIOS.app"
+            BlueprintName = "TodonIOS"
+            ReferencedContainer = "container:Todone.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -60,15 +81,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2B7E11532D46AEE2008F0642"
-            BuildableName = "Authentication.framework"
-            BlueprintName = "Authentication"
+            BlueprintIdentifier = "2BB0D4912D580DF700FE4956"
+            BuildableName = "TodonIOS.app"
+            BlueprintName = "TodonIOS"
             ReferencedContainer = "container:Todone.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

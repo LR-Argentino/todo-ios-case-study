@@ -50,7 +50,7 @@
 			);
 			target = 2B7FD7512D32A143009F7B10 /* Todone */;
 		};
-		2BB0D4B92D580DF900FE4956 /* Exceptions for "TodonIOS" folder in "TodonIOS" target */ = {
+		2BB0D5052D58C1BB00FE4956 /* Exceptions for "TodonIOS" folder in "TodonIOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -76,7 +76,7 @@
 		2BB0D4932D580DF700FE4956 /* TodonIOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2BB0D4B92D580DF900FE4956 /* Exceptions for "TodonIOS" folder in "TodonIOS" target */,
+				2BB0D5052D58C1BB00FE4956 /* Exceptions for "TodonIOS" folder in "TodonIOS" target */,
 			);
 			path = TodonIOS;
 			sourceTree = "<group>";
