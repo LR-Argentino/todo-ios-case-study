@@ -12,6 +12,7 @@ struct TodoItemViewData: Hashable {
     public var title: String
     public var comment: String?
     public var priority: String
+    public var isComplete: Bool
     public var dueDate: Date
     public let createdAt: Date
     public var users: [UUID]

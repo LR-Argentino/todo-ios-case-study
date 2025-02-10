@@ -14,13 +14,15 @@ public struct TodoItem: Equatable, Identifiable{
     public var comment: String?
     public var priority: String
     public var dueDate: Date
+    public var isComplete: Bool
     public let createdAt: Date
     public var users: [UUID]
     
-    public init( title: String, comment: String? = nil, priority: String, dueDate: Date, users: [UUID]) {
+    public init( title: String, comment: String? = nil, priority: String, isComplete: Bool = false ,dueDate: Date, users: [UUID]) {
         self.title = title
         self.comment = comment
         self.priority = priority
+        self.isComplete = isComplete
         self.users = users
         self.createdAt = Date.now
         self.dueDate = dueDate
@@ -32,6 +34,7 @@ public struct TodoItem: Equatable, Identifiable{
 }
 
 
+#if DEBUG
 extension TodoItem {
     public static var sampleData: [TodoItem] {
         return [
@@ -42,3 +45,4 @@ extension TodoItem {
         ]
     }
 }
+#endif

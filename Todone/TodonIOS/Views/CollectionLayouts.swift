@@ -12,6 +12,7 @@ struct CollectionLayouts {
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .grouped)
         listConfiguration.backgroundColor = .white
         listConfiguration.showsSeparators = false
+        
     
         return UICollectionViewCompositionalLayout.list(using: listConfiguration)
     }
