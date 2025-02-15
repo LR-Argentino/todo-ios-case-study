@@ -25,6 +25,7 @@ class TodoCollectionListViewController: UICollectionViewController {
         configureDataSource()
         updateSnapshot()
         
+    
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
     }
@@ -67,6 +68,7 @@ class TodoCollectionListViewController: UICollectionViewController {
      
      }
      */
+
 }
 
 
@@ -88,7 +90,7 @@ extension TodoCollectionListViewController {
             let todo = self.todoViewModel.todos[indexPath.item]
             var content = cell.defaultContentConfiguration()
             let symbolName = todo.isComplete ? "checkmark.square" : "square"
-            let symbolConfiguration = UIImage.SymbolConfiguration(textStyle: .title3)
+            let symbolConfiguration = UIImage.SymbolConfiguration(textStyle: .subheadline)
             let image = UIImage(systemName: symbolName, withConfiguration: symbolConfiguration)
             
             content.text = todoItemViewData.title
@@ -101,22 +103,11 @@ extension TodoCollectionListViewController {
             content.secondaryTextProperties.color = .secondaryLabel
             
             content.image = image
-            
-            // TODO: Create Enum with computed Prop, the prop should return the color
-            // use like that: Priority.high.color
-            switch todo.priority {
-            case "high":
-                content.imageProperties.tintColor = .red
-            case "medium":
-                content.imageProperties.tintColor = .orange
-            case "low":
-                content.imageProperties.tintColor = .secondaryLabel
-            default:
-                print("Warning no priority")
-            }
+            content.imageProperties.tintColor = .systemGray4
+            content.imageToTextPadding = 8
+
             
             content.prefersSideBySideTextAndSecondaryText = false
-            
             cell.contentConfiguration = content
         }
         
