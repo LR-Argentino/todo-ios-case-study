@@ -82,19 +82,29 @@ extension TodoCollectionListViewController {
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, TodoItemViewData> { cell, indexPath, todoItemViewData in
             let todo = self.todoViewModel.todos[indexPath.item]
             var content = cell.defaultContentConfiguration()
-            let symbolName = todo.isComplete ? "checkmark.square" : "square"
-            let symbolConfiguration = UIImage.SymbolConfiguration(textStyle: .subheadline)
-            let image = UIImage(systemName: symbolName, withConfiguration: symbolConfiguration)
+            let checkbox = self.createSquareImage(isComplete: todo.isComplete)
+            let truncatedComment = self.truncatedText(todoItemViewData.comment ?? "", maxWords: 5)
 
-            content.text = todoItemViewData.title
+            if todo.isComplete {
+                let attributes: [NSAttributedString.Key: Any] = [
+                    .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                    .foregroundColor: UIColor.gray // optional: Textfarbe ändern
+                ]
+
+                content.attributedText = NSAttributedString(string: todo.title, attributes: attributes)
+                content.secondaryAttributedText = NSAttributedString(string: truncatedComment, attributes: attributes)
+            } else {
+                content.text = todoItemViewData.title
+                content.secondaryText = truncatedComment
+            }
+
             content.textProperties.font = .interBold16
 
-            content.secondaryText = self.truncatedText(todoItemViewData.comment ?? "", maxWords: 5)
             content.secondaryTextProperties.numberOfLines = 1
             content.secondaryTextProperties.font = .interRegular12
             content.secondaryTextProperties.color = .secondaryLabel
 
-            content.image = image
+            content.image = checkbox
             content.imageProperties.tintColor = .systemGray4
             content.imageToTextPadding = 8
 
@@ -130,5 +140,13 @@ extension TodoCollectionListViewController {
         }
 
         return text
+    }
+
+    private func createSquareImage(isComplete: Bool) -> UIImage {
+        let symbolName = isComplete ? "checkmark.square" : "square"
+        let symbolConfiguration = UIImage.SymbolConfiguration(textStyle: .subheadline)
+        let image = UIImage(systemName: symbolName, withConfiguration: symbolConfiguration)!
+
+        return image
     }
 }
