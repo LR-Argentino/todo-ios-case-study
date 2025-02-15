@@ -9,14 +9,14 @@ import Foundation
 
 public class TodoLoader: LoadTodoProtocol {
     private let repository: TodoLoaderRepository
-    
+
     public init(repository: TodoLoaderRepository) {
         self.repository = repository
     }
-    
+
     public func load() async throws -> [TodoItem] {
         do {
-            return try await self.repository.fetch()
+            return try await repository.fetch()
         } catch {
             throw error
         }

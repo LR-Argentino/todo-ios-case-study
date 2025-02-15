@@ -229,6 +229,8 @@
 			buildConfigurationList = 2BB0D4BA2D580DF900FE4956 /* Build configuration list for PBXNativeTarget "TodonIOS" */;
 			buildPhases = (
 				2BB0D48E2D580DF700FE4956 /* Sources */,
+				2B99EB332D6082E00021213B /* ShellScript */,
+				2B0102C02D60799300B0192B /* ShellScript */,
 				2BB0D48F2D580DF700FE4956 /* Frameworks */,
 				2BB0D4902D580DF700FE4956 /* Resources */,
 			);
@@ -383,6 +385,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2B0102C02D60799300B0192B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f /usr/local/bin/swiftlint ]; then\n    /usr/local/bin/swiftlint lint --no-cache --quiet \"$SRCROOT/TodonIOS\"\nelif [ -f /opt/homebrew/bin/swiftlint ]; then\n    /opt/homebrew/bin/swiftlint lint --no-cache --quiet \"$SRCROOT/TodonIOS\"\nelse\n    echo \"warning: SwiftLint not installed or missing permissions\"\nfi\n";
+		};
+		2B99EB332D6082E00021213B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f /usr/local/bin/swiftformat ]; then\n    /usr/local/bin/swiftformat . --swiftversion 6.0 --disable trailingCommas\nelif [ -f /opt/homebrew/bin/swiftformat ]; then\n    /opt/homebrew/bin/swiftformat . --swiftversion 6.0 --disable trailingCommas\nelse\n    echo \"warning: SwiftFormat not installed, install it using 'brew install swiftformat'\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2B7FD74E2D32A143009F7B10 /* Sources */ = {
@@ -555,7 +596,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -621,7 +662,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

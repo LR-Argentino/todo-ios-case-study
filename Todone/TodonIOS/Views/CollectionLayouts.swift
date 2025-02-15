@@ -7,13 +7,12 @@
 
 import UIKit
 
-struct CollectionLayouts {
+enum CollectionLayouts {
     static func makeListLayout() -> UICollectionViewCompositionalLayout {
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .grouped)
         listConfiguration.backgroundColor = .white
         listConfiguration.showsSeparators = false
-        
-    
+
         return UICollectionViewCompositionalLayout.list(using: listConfiguration)
     }
 }
