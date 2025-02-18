@@ -10,15 +10,18 @@ import UIKit
 private let reuseIdentifier = "Cell"
 
 class TodoCollectionListViewController: UICollectionViewController {
+    let searchController: UISearchController
     var dataSource: DataSource!
 
-    let todoViewModel = TodoViewModel()
+    let todoViewModel: TodoViewModel
     var todos: [TodoItemViewData] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSearchController()
 
         collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        view.backgroundColor = .white
 
         todos = todoViewModel.fetchTodos()
 
@@ -29,7 +32,9 @@ class TodoCollectionListViewController: UICollectionViewController {
         // self.clearsSelectionOnViewWillAppear = false
     }
 
-    override init(collectionViewLayout layout: UICollectionViewLayout) {
+    init(viewModel: TodoViewModel, collectionViewLayout layout: UICollectionViewLayout, searchController: UISearchController) {
+        todoViewModel = viewModel
+        self.searchController = searchController
         super.init(collectionViewLayout: layout)
     }
 
@@ -66,6 +71,17 @@ class TodoCollectionListViewController: UICollectionViewController {
 
      }
      */
+
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.placeholder = "Search tasks..."
+
+        navigationItem.searchController = searchController
+        definesPresentationContext = false
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
 }
 
 // MARK: DataSource + Cell registration
@@ -148,5 +164,14 @@ extension TodoCollectionListViewController {
         let image = UIImage(systemName: symbolName, withConfiguration: symbolConfiguration)!
 
         return image
+    }
+}
+
+// MARK: - SearchController
+
+extension TodoCollectionListViewController: UISearchResultsUpdating {
+    func updateSearchResults(for _: UISearchController) {
+        // Perform methods from ViewModel
+//        print("DEBUG PRINT:", searchController.searchBar.text)
     }
 }
