@@ -13,7 +13,11 @@ protocol TodoRepositoryProtocol {
     func save(todo: TodoItem)
 }
 
-class TodoService {
+protocol TodoServiceProtocol {
+    func create(todo: TodoItem)
+}
+
+class TodoService: TodoServiceProtocol {
     private let todoRepository: TodoRepositoryProtocol
     
     init(todoRepository: TodoRepositoryProtocol) {
