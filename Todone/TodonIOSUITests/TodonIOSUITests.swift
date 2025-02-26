@@ -22,12 +22,19 @@ final class TodonIOSUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
+    func todoCollectionViewExistsOnTabTodoTabItem() throws {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let todoTab = app.tabBars.buttons["Todos"]
+
+        XCTAssertTrue(todoTab.exists)
+
+        todoTab.tap()
+
+        let todoCollectionView = app.collectionViews.firstMatch
+        XCTAssertTrue(todoCollectionView.exists, "❌ Collection View wird nicht angezeigt!")
     }
 
     @MainActor
