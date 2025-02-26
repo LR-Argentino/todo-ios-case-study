@@ -16,7 +16,8 @@ THEN: system created Todo successfully
 ```
 
 ## Architecture Diagramm
-![architecture](https://github.com/user-attachments/assets/abf58025-05ef-48cf-aa85-41f018db57c6)
+![architecture](https://github.com/user-attachments/assets/63c70dda-2559-4023-a958-9eefa4430740)
+
 
 
 ## List & Detail View
