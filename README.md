@@ -9,10 +9,10 @@
 
 #### ✅ Acceptance Criteria (Gherkin Format)
 ```gherkin
-Scenario: User must be logged in, to create todos
-GIVEN User is not logged in
-WHEN user create todos
-THEN no todos were created.
+Scenario: User is logged in
+GIVEN: User is logged in
+WHEN: user create todos
+THEN: system created Todo successfully
 ```
 
 
