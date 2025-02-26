@@ -8,6 +8,14 @@
 import XCTest
 import Todone
 
+class TodoService {
+    public var todos: [TodoItem] = []
+    
+    func create(todo: TodoItem){
+        todos.append(todo)
+    }
+}
+
 final class CreateTodoTests: XCTestCase {
     func test_create_createsTodoSuccessfully() async throws {
         // GIVEN
@@ -17,9 +25,17 @@ final class CreateTodoTests: XCTestCase {
         // WHEN
         let todo = TodoItem(title: "Check for vurnerabilities", priority: "high", dueDate: Date.now.addingTimeInterval(3600), users: [])
         let todoService = TodoService()
-        try await todoService.create(todo: todo)
+        todoService.create(todo: todo)
         
         // THEN
-        XCTAssertEqual(todos.count, 1)
+        XCTAssertEqual(todoService.todos.count, 1)
+    }
+    
+    // MARK: - Helpers
+    private class AppleAuthenticationStub  {
+        
+        static func signInWithAppleSuccessfully() -> String {
+            return "mockUserId"
+        }
     }
 }
