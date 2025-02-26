@@ -8,11 +8,20 @@
 import XCTest
 import Todone
 
+
+protocol TodoRepositoryProtocol {
+    func save(todo: TodoItem)
+}
+
 class TodoService {
-    public var todos: [TodoItem] = []
+    private let todoRepository: TodoRepositoryProtocol
+    
+    init(todoRepository: TodoRepositoryProtocol) {
+        self.todoRepository = todoRepository
+    }
     
     func create(todo: TodoItem){
-        todos.append(todo)
+        self.todoRepository.save(todo: todo)
     }
 }
 
@@ -20,15 +29,15 @@ final class CreateTodoTests: XCTestCase {
     func test_create_createsTodoSuccessfully() async throws {
         // GIVEN
         let userSesssion = AppleAuthenticationStub.signInWithAppleSuccessfully()
-        XCTAssertNotNil(userSesssion)
+        let repository = CoreDataRepositoryMock()
+        let todoService = TodoService(todoRepository: repository)
+        let todo = TodoItem(title: "Check for vurnerabilities", priority: "high", dueDate: Date.now.addingTimeInterval(3600), users: [])
         
         // WHEN
-        let todo = TodoItem(title: "Check for vurnerabilities", priority: "high", dueDate: Date.now.addingTimeInterval(3600), users: [])
-        let todoService = TodoService()
         todoService.create(todo: todo)
         
         // THEN
-        XCTAssertEqual(todoService.todos.count, 1)
+        XCTAssertEqual(repository.todos.count, 1)
     }
     
     // MARK: - Helpers
@@ -36,6 +45,14 @@ final class CreateTodoTests: XCTestCase {
         
         static func signInWithAppleSuccessfully() -> String {
             return "mockUserId"
+        }
+    }
+    
+    private class CoreDataRepositoryMock: TodoRepositoryProtocol {
+        public var todos: [TodoItem] = []
+        
+        func save(todo: TodoItem) {
+            todos.append(todo)
         }
     }
 }
